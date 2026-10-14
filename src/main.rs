@@ -38,6 +38,8 @@ fn esc(s: &str) -> String {
 }
 
 fn render(md: &str) -> String {
+    // files saved by Notepad/PowerShell start with a UTF-8 byte-order mark, which would break a leading heading
+    let md = md.strip_prefix('\u{feff}').unwrap_or(md);
     let opts = Options::ENABLE_TABLES
         | Options::ENABLE_FOOTNOTES
         | Options::ENABLE_STRIKETHROUGH
@@ -71,10 +73,41 @@ fn render(md: &str) -> String {
     out
 }
 
+/// Make latex2mathml's output look like TeX in browsers: only `\left`/`\right` fences stretch,
+/// `-` is a real minus sign, and named functions get the invisible "function application" spacing.
+fn fix_mathml(mut m: String) -> String {
+    m = m.replace("<mo>-</mo>", "<mo>\u{2212}</mo>");
+    for f in ["(", ")", "[", "]", "|"] {
+        m = m.replace(&format!("<mo>{f}</mo>"), &format!("<mo stretchy=\"false\">{f}</mo>"));
+    }
+    // not inside <msub>/<munder>/... where the name is the base (an extra child would break them)
+    const BASES: [&str; 6] = ["<msub>", "<msup>", "<msubsup>", "<munder>", "<mover>", "<munderover>"];
+    for f in ["sin", "cos", "tan", "cot", "sec", "csc", "sinh", "cosh", "tanh", "log", "ln", "exp", "arg", "deg", "dim", "ker"] {
+        let pat = format!("<mi>{f}</mi>");
+        let mut out = String::with_capacity(m.len());
+        let mut rest = m.as_str();
+        while let Some(i) = rest.find(&pat) {
+            out.push_str(&rest[..i + pat.len()]);
+            let before = &out[..out.len() - pat.len()];
+            if !BASES.iter().any(|b| before.ends_with(b)) {
+                out.push_str("<mo>\u{2061}</mo>");
+                // thin space, except before an opening parenthesis: sin(x) but sin x
+                if !rest[i + pat.len()..].starts_with("<mo stretchy=\"false\">(") {
+                    out.push_str("<mspace width=\"0.17em\"/>");
+                }
+            }
+            rest = &rest[i + pat.len()..];
+        }
+        out.push_str(rest);
+        m = out;
+    }
+    m
+}
+
 fn math(tex: &str, display: bool) -> Event<'static> {
     use latex2mathml::{DisplayStyle, latex_to_mathml};
     let style = if display { DisplayStyle::Block } else { DisplayStyle::Inline };
-    let h = match latex_to_mathml(tex, style) {
+    let h = match latex_to_mathml(tex, style).map(fix_mathml) {
         Ok(m) if display => format!("<div class=\"math\">{m}</div>"),
         Ok(m) => m,
         Err(e) => format!("<code class=\"err\" title=\"{}\">{}</code>", esc(&e.to_string()), esc(tex)),

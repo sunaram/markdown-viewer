@@ -5,6 +5,7 @@ body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 system-ui,-appl
 article{padding:32px clamp(16px,4vw,64px) 80px;overflow-wrap:break-word}
 h1,h2{border-bottom:1px solid var(--bd);padding-bottom:.3em}
 h1,h2,h3,h4{margin:1.5em 0 .6em;line-height:1.25}
+article>:first-child{margin-top:0}
 a{color:var(--a)}
 code,pre{font:85% ui-monospace,SFMono-Regular,Consolas,Menlo,monospace}
 code{background:var(--code);padding:.2em .4em;border-radius:6px}
@@ -18,7 +19,7 @@ tr:nth-child(2n){background:var(--code)}
 img,svg,video{max-width:100%}
 hr{border:0;border-top:1px solid var(--bd)}
 math{font-family:"Latin Modern Math","STIX Two Math","Cambria Math","Noto Sans Math",math}
-.math{text-align:center;margin:1em 0;overflow-x:auto}
+.math{text-align:center;margin:.6em 0;padding:.5em 0;overflow-x:auto;overflow-y:hidden}
 .err{color:#d1242f}
 input[type=checkbox]{margin-right:.5em}
 #find{position:fixed;top:8px;right:16px;display:none;background:var(--code);border:1px solid var(--bd);border-radius:6px;padding:4px;box-shadow:0 2px 8px #0004}

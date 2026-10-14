@@ -10,6 +10,16 @@ operating system's webview (WebView2 / WebKitGTK / WKWebView) instead of bundlin
 - **Desktop:** open dialog, drag and drop, live reload, recent files, find, zoom, print / save as PDF,
   light/dark/system theme (theme, zoom and recent files are remembered), links between `.md` files
 
+![Mermaid diagrams](docs/screenshots/diagrams.png)
+
+| | |
+|---|---|
+| ![LaTeX equations](docs/screenshots/math.png) | ![SVG and HTML](docs/screenshots/svg-html.png) |
+| ![Dark theme](docs/screenshots/diagrams-dark.png) | ![Dark theme equations](docs/screenshots/math-dark.png) |
+
+`samples/` has the documents shown above plus `showcase.md`, one long file that exercises everything.
+`tools/screenshot.ps1` regenerates the screenshots from the real app (Windows).
+
 ## Build
 
 ```sh
@@ -34,6 +44,10 @@ node tools/pack.mjs
 | macOS | `packaging/macos/bundle.sh` builds `Markdown Viewer.app` and a `.dmg` |
 
 `.github/workflows/build.yml` builds all three on a version tag. The icons are placeholders.
+
+## Privacy
+
+No telemetry, no accounts, nothing leaves your device - see [PRIVACY.md](PRIVACY.md).
 
 ## License
 
