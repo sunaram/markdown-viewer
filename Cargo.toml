@@ -8,7 +8,7 @@ description = "Tiny cross-platform Markdown viewer with LaTeX, Mermaid and HTML/
 [dependencies]
 latex2mathml = "0.2.3"
 miniz_oxide = "0.9.1"
-muda = { version = "0.21.2", default-features = false }
+muda = "0.21.2"
 pulldown-cmark = { version = "0.13.4", default-features = false, features = ["html"] }
 tao = "0.37.1"
 wry = "0.57.0"
