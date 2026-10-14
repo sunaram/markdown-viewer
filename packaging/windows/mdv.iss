@@ -1,6 +1,6 @@
 ; Inno Setup script -> setup.exe.  Build: ISCC packaging\windows\mdv.iss   (after cargo build --release)
 #define AppName "Markdown Viewer"
-#define AppVersion "0.1.1"
+#define AppVersion "0.1.2"
 
 [Setup]
 AppId={{6F1D0B52-6C0B-4E1B-9B7A-4D4D2D6C8A11}
