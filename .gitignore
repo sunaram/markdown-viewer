@@ -1,0 +1,8 @@
+/target
+/target-check
+/packaging/msix/out
+/packaging/msix/stage
+/packaging/macos/out
+# 5 MB upstream source for assets/mermaid.js.z - re-create with `npm pack mermaid` (see README)
+/tools/mermaid.min.js
+*.WebView2/

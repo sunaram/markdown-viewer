@@ -1,0 +1,12 @@
+[Desktop Entry]
+Type=Application
+Name=Markdown Viewer
+GenericName=Markdown Viewer
+Comment=Small, fast Markdown viewer with LaTeX, Mermaid and HTML/SVG/MathML support
+Exec=mdv %f
+Icon=mdv
+Terminal=false
+Categories=Office;Viewer;Utility;
+MimeType=text/markdown;text/x-markdown;
+Keywords=markdown;md;latex;mermaid;
+StartupWMClass=mdv

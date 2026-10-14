@@ -1,0 +1,26 @@
+:root{color-scheme:light;--fg:#1f2328;--bg:#fff;--mut:#59636e;--bd:#d1d9e0;--code:#f6f8fa;--a:#0969da}
+:root[data-theme=dark]{color-scheme:dark;--fg:#e6edf3;--bg:#0d1117;--mut:#9198a1;--bd:#3d444d;--code:#151b23;--a:#4493f8}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]):not([data-theme=dark]){color-scheme:dark;--fg:#e6edf3;--bg:#0d1117;--mut:#9198a1;--bd:#3d444d;--code:#151b23;--a:#4493f8}}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 system-ui,-apple-system,"Segoe UI",sans-serif}
+article{padding:32px clamp(16px,4vw,64px) 80px;overflow-wrap:break-word}
+h1,h2{border-bottom:1px solid var(--bd);padding-bottom:.3em}
+h1,h2,h3,h4{margin:1.5em 0 .6em;line-height:1.25}
+a{color:var(--a)}
+code,pre{font:85% ui-monospace,SFMono-Regular,Consolas,Menlo,monospace}
+code{background:var(--code);padding:.2em .4em;border-radius:6px}
+pre{background:var(--code);padding:16px;border-radius:6px;overflow:auto;line-height:1.45}
+pre code{background:none;padding:0;font-size:100%}
+pre.mermaid{background:none;text-align:center}
+blockquote{margin:0;padding:0 1em;color:var(--mut);border-left:.25em solid var(--bd)}
+table{border-collapse:collapse;display:block;overflow:auto}
+th,td{border:1px solid var(--bd);padding:6px 13px}
+tr:nth-child(2n){background:var(--code)}
+img,svg,video{max-width:100%}
+hr{border:0;border-top:1px solid var(--bd)}
+math{font-family:"Latin Modern Math","STIX Two Math","Cambria Math","Noto Sans Math",math}
+.math{text-align:center;margin:1em 0;overflow-x:auto}
+.err{color:#d1242f}
+input[type=checkbox]{margin-right:.5em}
+#find{position:fixed;top:8px;right:16px;display:none;background:var(--code);border:1px solid var(--bd);border-radius:6px;padding:4px;box-shadow:0 2px 8px #0004}
+#find input{background:var(--bg);color:var(--fg);border:1px solid var(--bd);border-radius:4px;padding:4px 8px;font:inherit;outline:none}
+@media print{#find{display:none!important}article{max-width:none;padding:0}}
