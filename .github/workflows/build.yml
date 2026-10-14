@@ -14,12 +14,15 @@ jobs:
       - uses: Swatinem/rust-cache@v2
       - run: cargo build --release
       - run: powershell -File packaging/msix/build.ps1
+      # stage flat so the artifact (and the release job) can address files by name
+      - shell: bash
+        run: |
+          mkdir dist
+          cp target/release/mdv.exe packaging/msix/out/mdv.msix dist/
       - uses: actions/upload-artifact@v4
         with:
           name: windows
-          path: |
-            target/release/mdv.exe
-            packaging/msix/out/mdv.msix
+          path: dist/*
 
   linux:
     runs-on: ubuntu-22.04
@@ -62,8 +65,10 @@ jobs:
         with:
           path: dist
           merge-multiple: true
+      - run: ls -l dist
       - uses: softprops/action-gh-release@v2
         with:
+          fail_on_unmatched_files: true
           files: |
             dist/mdv.exe
             dist/mdv.msix
