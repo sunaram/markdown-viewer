@@ -1153,7 +1153,7 @@ dependencies = [
 
 [[package]]
 name = "mdv"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "latex2mathml",
  "miniz_oxide 0.9.1",
