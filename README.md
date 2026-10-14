@@ -34,3 +34,7 @@ node tools/pack.mjs
 | macOS | `packaging/macos/bundle.sh` builds `Markdown Viewer.app` and a `.dmg` |
 
 `.github/workflows/build.yml` builds all three on a version tag. The icons are placeholders.
+
+## License
+
+MIT - see [LICENSE](LICENSE). The embedded Mermaid library is also MIT-licensed.

@@ -2,6 +2,8 @@
 name = "mdv"
 version = "0.1.0"
 edition = "2024"
+license = "MIT"
+description = "Tiny cross-platform Markdown viewer with LaTeX, Mermaid and HTML/SVG/MathML support"
 
 [dependencies]
 latex2mathml = "0.2.3"
