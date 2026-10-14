@@ -1,7 +1,9 @@
 name: build
 on:
   push:
+    branches: [main]
     tags: ["v*"]
+  pull_request:
   workflow_dispatch:
 
 jobs:
@@ -9,6 +11,7 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: Swatinem/rust-cache@v2
       - run: cargo build --release
       - run: powershell -File packaging/msix/build.ps1
       - uses: actions/upload-artifact@v4
@@ -22,6 +25,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
+      - uses: Swatinem/rust-cache@v2
       - run: sudo apt-get update && sudo apt-get install -y libwebkit2gtk-4.1-dev libgtk-3-dev libxdo-dev
       - run: cargo build --release
       - run: tar -czf mdv-linux-x86_64.tar.gz -C target/release mdv -C ../../packaging/linux mdv.desktop mdv.svg install.sh
@@ -34,6 +38,7 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: Swatinem/rust-cache@v2
       - run: rustup target add x86_64-apple-darwin aarch64-apple-darwin
       - run: |
           cargo build --release --target aarch64-apple-darwin
@@ -45,3 +50,22 @@ jobs:
         with:
           name: macos
           path: packaging/macos/out/*.dmg
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [windows, linux, macos]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/mdv.exe
+            dist/mdv.msix
+            dist/mdv-linux-x86_64.tar.gz
+            dist/*.dmg
