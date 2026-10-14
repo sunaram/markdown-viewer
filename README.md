@@ -6,6 +6,7 @@ operating system's webview (WebView2 / WebKitGTK / WKWebView) instead of bundlin
 - **Markdown:** tables, footnotes, task lists, strikethrough, heading attributes
 - **LaTeX:** `$inline$` and `$$display$$`, converted to MathML in Rust (no fonts or JavaScript shipped); includes `cases`, `aligned`, `array`, matrices, and `$$...$$` formulas inside Mermaid labels
 - **Mermaid:** diagrams in ```` ```mermaid ```` blocks; the library is embedded compressed and only loaded when needed
+- **Updates:** downloadable builds check GitHub Releases once a day and show a notice (Help menu to turn off); Microsoft Store builds never do
 - **HTML:** raw HTML, inline SVG and MathML pass straight through (scripts run too - only open files you trust)
 - **Desktop:** open dialog, drag and drop, live reload, recent files, find, zoom, print / save as PDF,
   light/dark/system theme (theme, zoom and recent files are remembered), links between `.md` files

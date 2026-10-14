@@ -47,3 +47,6 @@ mtr.menv-hline>mtd.menv-nonumber:only-child{padding-top:.1em;padding-bottom:0}
 mtd.menv-border-only:empty{width:.1em;padding:0;margin:0}
 mo.mop-negated{background:linear-gradient(to top left,transparent calc(50% - .8px),currentColor 50%,transparent calc(50% + .8px))}
 merror>mtext{font-family:monospace;white-space:pre-wrap;display:block;text-align:left}
+#upd{position:fixed;right:16px;bottom:16px;max-width:calc(100vw - 32px);background:var(--code);border:1px solid var(--bd);border-radius:6px;padding:8px 12px;box-shadow:0 2px 8px #0004;font-size:14px}
+#upd button{background:none;border:0;color:var(--mut);font:inherit;cursor:pointer;margin-left:8px;padding:0 4px}
+@media print{#upd{display:none!important}}

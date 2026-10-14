@@ -29,6 +29,37 @@
     // on macOS the native menu accelerators handle the rest
     if (!mac && keys[k]) { e.preventDefault(); send(keys[k]); }
   });
+  // update check for non-Store installs (window.__upd is only set by the app for those): asks GitHub for the latest release
+  var U = window.__upd;
+  function store(k, v) { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch (e) {} }
+  function newer(a, b) {
+    a = a.split('.'); b = b.split('.');
+    for (var i = 0; i < 3; i++) { var d = (+a[i] || 0) - (+b[i] || 0); if (d) return d > 0; }
+    return false;
+  }
+  function note(html, hold) {
+    var n = document.getElementById('upd') || document.body.appendChild(Object.assign(document.createElement('div'), { id: 'upd' }));
+    n.innerHTML = html + '<button title="Dismiss">✕</button>';
+    n.lastChild.onclick = function () { n.remove(); if (hold) store('upd_skip', hold); };
+    if (!hold) setTimeout(function () { n.remove(); }, 6000);
+  }
+  window.__checkUpdate = function (manual) {
+    if (!U) return;
+    fetch('https://api.github.com/repos/sunaram/markdown-viewer/releases/latest', { headers: { Accept: 'application/vnd.github+json' } })
+      .then(function (r) { if (!r.ok) throw 0; return r.json(); })
+      .then(function (j) {
+        var v = String(j.tag_name || '').replace(/^v/, '');
+        store('upd_t', String(Date.now()));
+        if (v && newer(v, U.v)) {
+          if (manual || store('upd_skip') != v)
+            note('Version ' + v + ' is available (you have ' + U.v + '). <a href="' + j.html_url + '">Download</a>', v);
+        } else if (manual) note('You have the latest version (' + U.v + ').');
+      })
+      .catch(function () { if (manual) note('Could not check for updates.'); });
+  };
+  // automatic check at most once a day
+  if (U && U.auto && Date.now() - (+store('upd_t') || 0) > 864e5) setTimeout(__checkUpdate, 1500);
+
   // plain-text fallback for labels that cannot hold MathML (SVG <text>): TeX -> readable Unicode
   var SYM = { alpha: 'α', beta: 'β', gamma: 'γ', delta: 'δ', epsilon: 'ε', varepsilon: 'ε', zeta: 'ζ', eta: 'η', theta: 'θ', lambda: 'λ', mu: 'μ', nu: 'ν', xi: 'ξ', pi: 'π', rho: 'ρ', sigma: 'σ', tau: 'τ', phi: 'φ', varphi: 'φ', chi: 'χ', psi: 'ψ', omega: 'ω', Gamma: 'Γ', Delta: 'Δ', Theta: 'Θ', Lambda: 'Λ', Pi: 'Π', Sigma: 'Σ', Phi: 'Φ', Psi: 'Ψ', Omega: 'Ω', infty: '∞', partial: '∂', nabla: '∇', sum: '∑', prod: '∏', int: '∫', times: '×', cdot: '·', pm: '±', leq: '≤', le: '≤', geq: '≥', ge: '≥', neq: '≠', ne: '≠', approx: '≈', equiv: '≡', to: '→', rightarrow: '→', leftarrow: '←', Rightarrow: '⇒', in: '∈', forall: '∀', exists: '∃', sqrt: '√', ldots: '…', cdots: '⋯', hbar: 'ħ' };
   var SUP = '⁰¹²³⁴⁵⁶⁷⁸⁹', SUB = '₀₁₂₃₄₅₆₇₈₉';

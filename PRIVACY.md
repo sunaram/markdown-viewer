@@ -20,7 +20,8 @@ The app saves a small settings file in your user profile (`%APPDATA%\mdv` on Win
 `~/Library/Application Support/mdv` on macOS) containing:
 
 - your theme choice (system, light or dark),
-- your zoom level, and
+- your zoom level,
+- whether the update check is enabled (downloadable builds only), and
 - the file paths of the last ten documents you opened (the "Open Recent" list).
 
 The operating system's web view component also keeps its normal cache in the `webview` folder next to that settings file.
@@ -30,6 +31,13 @@ on Windows when installed from the Microsoft Store).
 ## Network access
 
 The app itself makes no network connections and sends no data to the publisher or any third party.
+
+The one exception is the **update check in the downloadable builds** (the standalone `.exe`, installer, Linux and macOS
+packages from GitHub Releases). At most once a day it asks the public GitHub API for the latest release version
+(`https://api.github.com/repos/sunaram/markdown-viewer/releases/latest`) and shows a notice if a newer one exists. No
+information about you, your files or your device is sent beyond what any web request includes (such as your IP address, which
+GitHub can see). You can turn it off in **Help > Check for updates at startup**, or run it on demand with **Help > Check for
+Updates**. The version installed from the **Microsoft Store never makes this request**: the Store delivers updates.
 
 Markdown documents can contain remote content - for example images, videos, embedded frames or scripts that point to web
 addresses. If a document you open contains such content, the app's web view will load it from the address given in the
