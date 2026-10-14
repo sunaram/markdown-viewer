@@ -48,7 +48,7 @@ $$\operatorname{softmax}(z)_i=\frac{e^{z_i}}{\sum_j e^{z_j}} \qquad \mathcal{L}(
 Anything LaTeX can't express can be written as MathML directly. A piecewise function and a continued fraction:
 
 <math display="block">
-  <mi>f</mi><mo>(</mo><mi>x</mi><mo>)</mo><mo>=</mo>
+  <mrow><mi>f</mi><mo>(</mo><mi>x</mi><mo>)</mo></mrow><mo>=</mo>
   <mrow><mo>{</mo>
     <mtable columnalign="left left">
       <mtr><mtd><msup><mi>x</mi><mn>2</mn></msup></mtd><mtd><mtext>if&nbsp;</mtext><mi>x</mi><mo>&ge;</mo><mn>0</mn></mtd></mtr>
