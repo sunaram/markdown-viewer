@@ -40,13 +40,12 @@ The app is only a few megabytes. It has no account, no ads, no analytics and no 
 
 ## What's new in this version (max 1,500 characters)
 
-First release!
-- Mermaid diagrams: flowcharts, sequence, class, state, ER, Gantt, pie, mind maps and more, rendered offline and matching your theme
-- LaTeX math: inline ($...$) and display ($$...$$) equations, typeset natively
-- Raw HTML, inline SVG and MathML embeds
-- Live reload, find in page, zoom, print / save as PDF
-- Light, dark and system themes; remembers your theme, zoom and recent files
-- Open files by menu, drag and drop, or by double-clicking .md files
+Much better LaTeX, and math inside diagrams.
+- New: piecewise functions (cases), aligned multi-line equations (aligned, align, gathered, split, multline) and tables with rules (array with \hline)
+- New: LaTeX in Mermaid diagrams - write $$E = mc^2$$ in a node or edge label and it is typeset as real math
+- More matrix types (Bmatrix, smallmatrix) and \substack, plus many more LaTeX commands
+- A formula the viewer cannot understand is now shown inline with an error message instead of breaking the page
+- Improved spacing for limits, such as lim and sum with subscripts
 
 ## Product features (max 20 entries, 200 characters each)
 
