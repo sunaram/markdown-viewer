@@ -1,7 +1,8 @@
 <#
  Builds mdv.msix from target\release\mdv.exe.   Prerequisites: cargo build --release; Windows 10/11 SDK.
 
- Store submission (unsigned is fine - the Store signs it):
+ Store submission (unsigned is fine - the Store signs it). Values can also come from the env vars
+ MSIX_IDENTITY, MSIX_PUBLISHER, MSIX_PUBLISHER_DISPLAY, MSIX_DISPLAY_NAME (CI sets them from repo variables):
    .\build.ps1 -Identity "12345Name.MarkdownViewer" -Publisher "CN=XXXXXXXX-XXXX-..." -PublisherDisplayName "Your Name"
    (use the three values from Partner Center > Product management > Product identity)
 
@@ -11,10 +12,10 @@
    then double-click out\mdv.msix (or Add-AppxPackage out\mdv.msix)
 #>
 param(
-    [string]$Identity = 'mdv.MarkdownViewer',
-    [string]$Publisher = 'CN=mdv-dev',
-    [string]$PublisherDisplayName = 'mdv',
-    [string]$DisplayName = 'Markdown Viewer',
+    [string]$Identity = $(if ($env:MSIX_IDENTITY) { $env:MSIX_IDENTITY } else { 'mdv.MarkdownViewer' }),
+    [string]$Publisher = $(if ($env:MSIX_PUBLISHER) { $env:MSIX_PUBLISHER } else { 'CN=mdv-dev' }),
+    [string]$PublisherDisplayName = $(if ($env:MSIX_PUBLISHER_DISPLAY) { $env:MSIX_PUBLISHER_DISPLAY } else { 'mdv' }),
+    [string]$DisplayName = $(if ($env:MSIX_DISPLAY_NAME) { $env:MSIX_DISPLAY_NAME } else { 'Markdown Viewer' }),
     [string]$Exe = "$PSScriptRoot\..\..\target\release\mdv.exe",
     [switch]$Sign
 )

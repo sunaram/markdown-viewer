@@ -14,6 +14,12 @@ jobs:
       - uses: Swatinem/rust-cache@v2
       - run: cargo build --release
       - run: powershell -File packaging/msix/build.ps1
+        env:
+          # Partner Center > Product identity; set under Settings > Secrets and variables > Actions > Variables
+          MSIX_IDENTITY: ${{ vars.MSIX_IDENTITY }}
+          MSIX_PUBLISHER: ${{ vars.MSIX_PUBLISHER }}
+          MSIX_PUBLISHER_DISPLAY: ${{ vars.MSIX_PUBLISHER_DISPLAY }}
+          MSIX_DISPLAY_NAME: ${{ vars.MSIX_DISPLAY_NAME }}
       # stage flat so the artifact (and the release job) can address files by name
       - shell: bash
         run: |
