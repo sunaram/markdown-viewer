@@ -25,3 +25,25 @@ input[type=checkbox]{margin-right:.5em}
 #find{position:fixed;top:8px;right:16px;display:none;background:var(--code);border:1px solid var(--bd);border-radius:6px;padding:4px;box-shadow:0 2px 8px #0004}
 #find input{background:var(--bg);color:var(--fg);border:1px solid var(--bd);border-radius:4px;padding:4px 8px;font:inherit;outline:none}
 @media print{#find{display:none!important}article{max-width:none;padding:0}}
+/* table-like math environments (cases, aligned, array, matrices); class names come from pulldown-latex */
+mtd{padding:.2em .4em}
+mtable{border-color:currentColor;border-spacing:0;border-collapse:collapse}
+mtr:last-child>mtd:empty:only-child,mtr:last-child:has(>mtd:empty)::after{display:none}
+mtable.menv-alignlike>mtr>mtd:nth-child(odd),mtable.menv-cells-right>mtr>mtd,mtable.menv-multline>mtr>mtd:last-child,mtd.cell-right{text-align:right;text-align:-webkit-right}
+mtable.menv-alignlike>mtr>mtd:nth-child(even),mtable.menv-cells-left>mtr>mtd,mtable.menv-multline>mtr>mtd:first-child,mtd.cell-left{text-align:left}
+mtable.menv-multline>mtr>mtd{width:100%}
+mtable.menv-align>mtr>mtd:nth-child(2n+3){padding-left:1em}
+mtable.menv-cases>mtr>mtd:first-child{padding-right:1em}
+mtable.menv-arraylike>mtr>mtd{padding:.2em .5em}
+mtable.menv-matrix>mtr>mtd:first-child{padding-left:.1em}
+mtable.menv-matrix>mtr>mtd:last-child{padding-right:.1em}
+mtd.menv-left-solid{border-left:.06em solid}
+mtd.menv-right-solid{border-right:.06em solid}
+mtd.menv-left-dashed{border-left:.06em dashed}
+mtd.menv-right-dashed{border-right:.06em dashed}
+mtr.menv-hline{border-top:.06em solid}
+mtr.menv-hdashline{border-top:.06em dashed}
+mtr.menv-hline>mtd.menv-nonumber:only-child{padding-top:.1em;padding-bottom:0}
+mtd.menv-border-only:empty{width:.1em;padding:0;margin:0}
+mo.mop-negated{background:linear-gradient(to top left,transparent calc(50% - .8px),currentColor 50%,transparent calc(50% + .8px))}
+merror>mtext{font-family:monospace;white-space:pre-wrap;display:block;text-align:left}

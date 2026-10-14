@@ -6,7 +6,7 @@ license = "MIT"
 description = "Tiny cross-platform Markdown viewer with LaTeX, Mermaid and HTML/SVG/MathML support"
 
 [dependencies]
-latex2mathml = "0.2.3"
+pulldown-latex = "0.8.0"
 miniz_oxide = "0.9.1"
 muda = "0.21.2"
 pulldown-cmark = { version = "0.13.4", default-features = false, features = ["html"] }

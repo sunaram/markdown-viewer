@@ -50,9 +50,11 @@ fn render(md: &str) -> String {
         | Options::ENABLE_SUBSCRIPT;
     let mut in_mermaid = false;
     let mut src = String::new();
-    let events = Parser::new_ext(md, opts).filter_map(|ev| match ev {
-        Event::InlineMath(t) => Some(math(&t, false)),
-        Event::DisplayMath(t) => Some(math(&t, true)),
+    // the parser un-escapes a double backslash inside math, which would destroy row breaks, so take the TeX from the source
+    let raw = |r: &std::ops::Range<usize>| md[r.clone()].trim_matches('$');
+    let events = Parser::new_ext(md, opts).into_offset_iter().filter_map(|(ev, range)| match ev {
+        Event::InlineMath(_) => Some(math(raw(&range), false)),
+        Event::DisplayMath(_) => Some(math(raw(&range), true)),
         Event::Start(Tag::CodeBlock(CodeBlockKind::Fenced(ref l))) if &**l == "mermaid" => {
             in_mermaid = true;
             src.clear();
@@ -64,7 +66,9 @@ fn render(md: &str) -> String {
         }
         Event::End(TagEnd::CodeBlock) if in_mermaid => {
             in_mermaid = false;
-            Some(Event::Html(format!("<pre class=\"mermaid\">{}</pre>\n", esc(&src)).into()))
+            let (code, items) = mermaid_math(&src);
+            let data = if items.is_empty() { String::new() } else { format!(" data-m=\"{}\"", esc(&items).replace('"', "&quot;")) };
+            Some(Event::Html(format!("<pre class=\"mermaid\"{data}>{}</pre>\n", esc(&code)).into()))
         }
         e => Some(e),
     });
@@ -73,46 +77,72 @@ fn render(md: &str) -> String {
     out
 }
 
-/// Make latex2mathml's output look like TeX in browsers: only `\left`/`\right` fences stretch,
-/// `-` is a real minus sign, and named functions get the invisible "function application" spacing.
-fn fix_mathml(mut m: String) -> String {
-    m = m.replace("<mo>-</mo>", "<mo>\u{2212}</mo>");
-    for f in ["(", ")", "[", "]", "|"] {
-        m = m.replace(&format!("<mo>{f}</mo>"), &format!("<mo stretchy=\"false\">{f}</mo>"));
-    }
-    // not inside <msub>/<munder>/... where the name is the base (an extra child would break them)
-    const BASES: [&str; 6] = ["<msub>", "<msup>", "<msubsup>", "<munder>", "<mover>", "<munderover>"];
-    for f in ["sin", "cos", "tan", "cot", "sec", "csc", "sinh", "cosh", "tanh", "log", "ln", "exp", "arg", "deg", "dim", "ker"] {
-        let pat = format!("<mi>{f}</mi>");
-        let mut out = String::with_capacity(m.len());
-        let mut rest = m.as_str();
-        while let Some(i) = rest.find(&pat) {
-            out.push_str(&rest[..i + pat.len()]);
-            let before = &out[..out.len() - pat.len()];
-            if !BASES.iter().any(|b| before.ends_with(b)) {
-                out.push_str("<mo>\u{2061}</mo>");
-                // thin space, except before an opening parenthesis: sin(x) but sin x
-                if !rest[i + pat.len()..].starts_with("<mo stretchy=\"false\">(") {
-                    out.push_str("<mspace width=\"0.17em\"/>");
-                }
-            }
-            rest = &rest[i + pat.len()..];
+/// Work around two pulldown-latex quirks: a space before an operator with limits ends up as the *base* of the
+/// <munder>/<mover> (so the operator becomes a script), and non-breaking spaces in text are double-escaped.
+fn fix_mathml(m: String) -> String {
+    let mut m = m.replace("&amp;nbsp;", "\u{a0}").replace("&nbsp;", "\u{a0}");
+    for tag in ["munder", "mover", "munderover", "msub", "msup", "msubsup"] {
+        for sp in ["0.1667em", "0.2222em", "0.2778em"] {
+            let sp = format!("<mspace width=\"{sp}\" />");
+            m = m.replace(&format!("<{tag}>{sp}"), &format!("{sp}<{tag}>"));
         }
-        out.push_str(rest);
-        m = out;
     }
     m
 }
 
+fn tex_to_mathml(tex: &str, display: bool) -> Result<String, String> {
+    use pulldown_latex::config::{DisplayMode, RenderConfig};
+    use pulldown_latex::{Parser, Storage, push_mathml};
+    let storage = Storage::new();
+    let cfg = RenderConfig {
+        display_mode: if display { DisplayMode::Block } else { DisplayMode::Inline },
+        ..Default::default()
+    };
+    let mut out = String::new();
+    push_mathml(&mut out, Parser::new(tex, &storage), cfg).map_err(|e| e.to_string())?;
+    Ok(fix_mathml(out))
+}
+
 fn math(tex: &str, display: bool) -> Event<'static> {
-    use latex2mathml::{DisplayStyle, latex_to_mathml};
-    let style = if display { DisplayStyle::Block } else { DisplayStyle::Inline };
-    let h = match latex_to_mathml(tex, style).map(fix_mathml) {
+    let h = match tex_to_mathml(tex, display) {
         Ok(m) if display => format!("<div class=\"math\">{m}</div>"),
         Ok(m) => m,
-        Err(e) => format!("<code class=\"err\" title=\"{}\">{}</code>", esc(&e.to_string()), esc(tex)),
+        Err(e) => format!("<code class=\"err\" title=\"{}\">{}</code>", esc(&e), esc(tex)),
     };
     Event::InlineHtml(h.into())
+}
+
+/// Mermaid draws `$$...$$` labels as plain text, so swap each formula for a placeholder word and hand the
+/// typeset MathML (plus the TeX, for labels that can only hold text) to app.js, which puts it back after drawing.
+fn mermaid_math(src: &str) -> (String, String) {
+    let mut out = String::new();
+    let mut items = Vec::new();
+    let mut rest = src;
+    while let Some(i) = rest.find("$$") {
+        let Some(j) = rest[i + 2..].find("$$") else { break };
+        let tex = rest[i + 2..i + 2 + j].trim();
+        out.push_str(&rest[..i]);
+        out.push_str(&format!("mdvm{}z", items.len()));
+        let ml = tex_to_mathml(tex, false).unwrap_or_else(|_| format!("<code>{}</code>", esc(tex)));
+        items.push(format!("[{},{}]", json_str(&ml), json_str(tex)));
+        rest = &rest[i + 2 + j + 2..];
+    }
+    out.push_str(rest);
+    (out, if items.is_empty() { String::new() } else { format!("[{}]", items.join(",")) })
+}
+
+fn json_str(s: &str) -> String {
+    let mut o = String::from("\"");
+    for c in s.chars() {
+        match c {
+            '"' => o.push_str("\\\""),
+            '\\' => o.push_str("\\\\"),
+            c if (c as u32) < 0x20 => o.push(' '),
+            c => o.push(c),
+        }
+    }
+    o.push('"');
+    o
 }
 
 fn page(state: &State) -> String {

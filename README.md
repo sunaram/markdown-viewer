@@ -4,7 +4,7 @@ A tiny cross-platform (Windows, Linux, macOS) Markdown viewer. The release binar
 operating system's webview (WebView2 / WebKitGTK / WKWebView) instead of bundling a browser.
 
 - **Markdown:** tables, footnotes, task lists, strikethrough, heading attributes
-- **LaTeX:** `$inline$` and `$$display$$`, converted to MathML in Rust (no fonts or JavaScript shipped)
+- **LaTeX:** `$inline$` and `$$display$$`, converted to MathML in Rust (no fonts or JavaScript shipped); includes `cases`, `aligned`, `array`, matrices, and `$$...$$` formulas inside Mermaid labels
 - **Mermaid:** diagrams in ```` ```mermaid ```` blocks; the library is embedded compressed and only loaded when needed
 - **HTML:** raw HTML, inline SVG and MathML pass straight through (scripts run too - only open files you trust)
 - **Desktop:** open dialog, drag and drop, live reload, recent files, find, zoom, print / save as PDF,
