@@ -29,14 +29,18 @@ about 2.6 MB because it uses the operating system's webview (WebView2 / WebKitGT
 
 ## Install
 
-Download from the [latest release](https://github.com/sunaram/markdown-viewer/releases/latest):
+mdv is **free to download** from the [Releases section](https://github.com/sunaram/markdown-viewer/releases/latest):
 
 | File | For |
 |---|---|
 | `mdv.exe` | Windows, portable (needs the WebView2 runtime, preinstalled on Windows 11) |
-| `mdv.msix` | Windows package (the Microsoft Store build) |
+| `mdv.msix` | Windows package |
 | Linux `.tar.gz` | Linux, with `install.sh` for a per-user install |
 | macOS `.dmg` | macOS (ad-hoc signed: right-click > Open the first time) |
+
+If you want the trust and convenience of the Microsoft Store (verified publisher, automatic updates, clean
+install/uninstall), you can [buy it there for $0.99](https://apps.microsoft.com/detail/9MZ3GKXSM136?hl=en-us). It is the same
+software; the price supports development.
 
 ## Usage
 
